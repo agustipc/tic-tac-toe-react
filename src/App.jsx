@@ -1,35 +1,10 @@
+import confetti from "canvas-confetti"
 import { useState } from "react"
+import { Square } from "./components/Square"
+import { TURNS } from "./constants"
+import { checkWinner, checkEndGame } from "./utils"
+import { Winner } from "./components/WinnerModal"
 
-const TURNS = {
-  X: '❌',
-  O: '⭕️'
-}
-
-const WINNING_COMBINATIONS = [
-  [0, 1, 2], // top row
-  [3, 4, 5], // middle row
-  [6, 7, 8], // bottom row
-  [0, 4, 8], // diagonal top left to bottom right
-  [2, 4, 6], // diagonal top right to bottom left
-  [0, 3, 6], // left column
-  [1, 4, 7], // middle column
-  [2, 5, 8] // right column
-]
-
-
-const Square = ({children, isSelected, updateBoard, index}) => {
-  const className = `square ${isSelected ? 'is-selected' : ''}`
-
-  const handleClick = () => {
-    updateBoard(index)
-  }
-
-  return (
-    <div onClick={handleClick} className={className}>
-      {children}
-    </div>
-  )
-}
 
 function App() {
   const [board, setBoard] = useState(Array(9).fill(null))
@@ -38,14 +13,10 @@ function App() {
   const [winner, setWinner] = useState(null)
 
 
-  const checkWinner = (boardToCheck) => {
-    for (const combination of WINNING_COMBINATIONS) {
-      const [a, b, c] = combination
-      if (boardToCheck[a] && boardToCheck[a] === boardToCheck[b] && boardToCheck[a] === boardToCheck[c]) {
-        return boardToCheck[a]
-      }
-    }
-    return null
+  const resetGame = () => {
+    setBoard(Array(9).fill(null))
+    setTurn(TURNS.X)
+    setWinner(null)
   }
 
   const updateBoard = (index) => {
@@ -55,13 +26,17 @@ function App() {
     const newBoard = [...board]
     newBoard[index] = turn
     setBoard(newBoard)
+    setTurn(newTurn)
     const newWinner = checkWinner(newBoard)
     if(newWinner) {
+      confetti()
       setWinner(() => {
         return newWinner
       })
+    }else if(checkEndGame(newBoard)){
+      setWinner(false)
     }
-    setTurn(newTurn)
+    
   }
 
   return (
@@ -69,10 +44,10 @@ function App() {
       <h1>Tic Tac Toe</h1>
       <section className="game">
         {
-          board.map((_, index) => {
+          board.map((square, index) => {
             return (
               <Square key={index} index={index} updateBoard={updateBoard} >
-                {board[index]}
+                {square}
               </Square>
             )
           })
@@ -82,6 +57,7 @@ function App() {
         <Square isSelected={turn === TURNS.X}>{TURNS.X}</Square>
         <Square isSelected={turn === TURNS.O}>{TURNS.O}</Square>
       </section>
+      <Winner winner={winner} onClick={resetGame} />
     </main>
   )
 }
