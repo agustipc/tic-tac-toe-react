@@ -4,6 +4,7 @@ import { Square } from "./components/Square"
 import { TURNS } from "./constants"
 import { checkWinner, checkEndGame } from "./utils"
 import { Winner } from "./components/WinnerModal"
+import { resetGameStorage, saveGameToStorage } from "./storage"
 
 
 function App() {
@@ -22,8 +23,7 @@ function App() {
     setBoard(Array(9).fill(null))
     setTurn(TURNS.X)
     setWinner(null)
-    window.localStorage.removeItem('board')
-    window.localStorage.removeItem('turn')
+    resetGameStorage()
   }
 
   const updateBoard = (index) => {
@@ -36,8 +36,7 @@ function App() {
     setTurn(newTurn)
 
     // save turn in localstorage
-    window.localStorage.setItem('board', JSON.stringify(newBoard))
-    window.localStorage.setItem('turn', newTurn)
+    saveGameToStorage({board: newBoard, turn: newTurn})
 
     const newWinner = checkWinner(newBoard)
     if(newWinner) {
