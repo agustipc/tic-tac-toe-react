@@ -1,14 +1,14 @@
-import { PropTypes } from "prop-types"
-import { Square } from "./Square"
+import { PropTypes } from 'prop-types'
+import { Square } from './Square'
 
-export const Winner = ({winner, onClick}) => {
-  if(winner === null ) return null
+export const Winner = ({ winner, onClick }) => {
+  if (winner === null) return null
 
   const winnerText = winner === false ? 'TIE' : 'WINNER:'
 
   return (
-    <section className="winner">
-      <div className="text">
+    <section className='winner'>
+      <div className='text'>
         <h2>{winnerText}</h2>
         <header>
           {winner && <Square>{winner}</Square>}
@@ -17,7 +17,7 @@ export const Winner = ({winner, onClick}) => {
           <button onClick={onClick}>Play again</button>
         </footer>
       </div>
-    </section>     
+    </section>
   )
 }
 
@@ -25,4 +25,3 @@ Winner.propTypes = {
   winner: PropTypes.string,
   onClick: PropTypes.func
 }
-

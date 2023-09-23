@@ -1,20 +1,19 @@
-import confetti from "canvas-confetti"
-import { useState } from "react"
-import { Square } from "./components/Square"
-import { TURNS } from "./constants"
-import { checkWinner, checkEndGame } from "./utils"
-import { Winner } from "./components/WinnerModal"
-import { resetGameStorage, saveGameToStorage } from "./storage"
+import confetti from 'canvas-confetti'
+import { useState } from 'react'
+import { Square } from './components/Square'
+import { TURNS } from './constants'
+import { checkWinner, checkEndGame } from './utils'
+import { Winner } from './components/WinnerModal'
+import { resetGameStorage, saveGameToStorage } from './storage'
 
-
-function App() {
+function App () {
   const [board, setBoard] = useState(() => {
     const boardFromStorage = window.localStorage.getItem('board')
     return boardFromStorage ? JSON.parse(boardFromStorage) : Array(9).fill(null)
   })
   const [turn, setTurn] = useState(() => {
     const turnFromStorage = window.localStorage.getItem('turn')
-    return turnFromStorage ? turnFromStorage : TURNS.X
+    return turnFromStorage || TURNS.X
   })
   // true if there is a winner and false if there is a tie
   const [winner, setWinner] = useState(null)
@@ -27,7 +26,7 @@ function App() {
   }
 
   const updateBoard = (index) => {
-    if(board[index] !== null || winner !== null) return
+    if (board[index] !== null || winner !== null) return
 
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
     const newBoard = [...board]
@@ -36,35 +35,34 @@ function App() {
     setTurn(newTurn)
 
     // save turn in localstorage
-    saveGameToStorage({board: newBoard, turn: newTurn})
+    saveGameToStorage({ board: newBoard, turn: newTurn })
 
     const newWinner = checkWinner(newBoard)
-    if(newWinner) {
+    if (newWinner) {
       confetti()
       setWinner(() => {
         return newWinner
       })
-    }else if(checkEndGame(newBoard)){
+    } else if (checkEndGame(newBoard)) {
       setWinner(false)
     }
-    
   }
 
   return (
-    <main className="board">
+    <main className='board'>
       <h1>Tic Tac Toe</h1>
-      <section className="game">
+      <section className='game'>
         {
           board.map((square, index) => {
             return (
-              <Square key={index} index={index} updateBoard={updateBoard} >
+              <Square key={index} index={index} updateBoard={updateBoard}>
                 {square}
               </Square>
             )
           })
         }
       </section>
-      <section className="turn">
+      <section className='turn'>
         <Square isSelected={turn === TURNS.X}>{TURNS.X}</Square>
         <Square isSelected={turn === TURNS.O}>{TURNS.O}</Square>
       </section>
